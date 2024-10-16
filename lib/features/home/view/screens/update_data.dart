@@ -1,14 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:logger/web.dart';
 import 'package:mvvm/core/local_storage/shared_pref.dart';
+import 'package:mvvm/error/server_exception/server_exception.dart';
 import 'package:mvvm/features/home/models/data_model.dart';
+import 'package:mvvm/features/home/view/screens/home_screen.dart';
 import 'package:mvvm/features/home/view/widgets/repeated_textfield.dart';
 
 class UpdateData extends StatefulWidget {
-  List itemsList = [];
   TodoModel? items;
-  UpdateData({super.key, required this.itemsList, this.items});
+  UpdateData({super.key, this.items});
 
   @override
   State<UpdateData> createState() => _UpdateDataState();
@@ -23,8 +26,28 @@ class _UpdateDataState extends State<UpdateData> {
     super.initState();
   }
 
-  int index = 0;
+  updateData() async {
+    try {
+      itemList = await LocalStorage().getData() ?? [];
+      List<TodoModel> item = itemList;
+      int index = item.indexWhere((p) => p.title == widget.items!.title);
 
+      TodoModel data = TodoModel(
+          title: titleController.text,
+          description: descriptionController.text,
+          disableText: false);
+      debugPrint(jsonEncode(data));
+      debugPrint(index.toString());
+      await LocalStorage()
+          .updateData(data, index)
+          .then((value) => Get.offAll(ToDoHomeScreen()));
+    } catch (e) {
+      Logger().e(e.toString());
+    }
+  }
+
+  int index = 0;
+  List<TodoModel> itemList = [];
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   @override
@@ -49,13 +72,7 @@ class _UpdateDataState extends State<UpdateData> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          var temp = jsonEncode(widget.itemsList);
-          List temppp = [];
-          temppp.add(temp);
-
-          var index = temp.indexOf(widget.items!.title);
-          temppp[15] = titleController.text;
-          print(temppp);
+          updateData();
         },
         child: Text("Save", style: TextStyle(fontWeight: FontWeight.bold)),
       ),

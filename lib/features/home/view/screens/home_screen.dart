@@ -18,7 +18,7 @@ class _ToDoHomeScreenState extends State<ToDoHomeScreen> {
   @override
   void initState() {
     super.initState();
-    getData();
+    getDataa();
   }
 
   final searchController = TextEditingController();
@@ -29,16 +29,15 @@ class _ToDoHomeScreenState extends State<ToDoHomeScreen> {
 
   final isSearch = true.obs;
 
-  getData() async {
+  getDataa() async {
     setState(() {
       isLoading = true;
     });
     try {
       dataList = await LocalStorage().getData() ?? [];
+
       filteredDataList = dataList;
-      Logger().e(filteredDataList.toString());
-    } catch (e) {
-      Logger().f(e.toString());
+    } catch (e, s) {
       throw ServerException().errorMessage();
     } finally {
       Future.delayed(Duration(seconds: 1)).whenComplete(() => setState(() {
@@ -99,7 +98,6 @@ class _ToDoHomeScreenState extends State<ToDoHomeScreen> {
                     return GestureDetector(
                       onTap: () {
                         Get.to(() => UpdateData(
-                              itemsList: filteredDataList,
                               items: filteredDataList[index],
                             ));
                       },
@@ -108,7 +106,7 @@ class _ToDoHomeScreenState extends State<ToDoHomeScreen> {
                         setState(() {});
                       },
                       child: Dismissible(
-                        key: Key(data.title),
+                        key: Key(data.title ?? "untitled"),
                         background: Container(
                           color: Colors.red,
                           alignment: Alignment.centerRight,
@@ -126,7 +124,7 @@ class _ToDoHomeScreenState extends State<ToDoHomeScreen> {
                         },
                         child: ListTile(
                           title: Text(
-                            data.title,
+                            data.title ?? "undifined",
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,

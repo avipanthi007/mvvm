@@ -2,14 +2,13 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class TodoModel {
-
   String title;
   String description;
   bool disableText;
   TodoModel({
     required this.title,
     required this.description,
-    required this.disableText
+    required this.disableText,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,5 +29,6 @@ class TodoModel {
 
   String toJson() => json.encode(toMap());
 
-  factory TodoModel.fromJson(String source) => TodoModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory TodoModel.fromJson(String source) =>
+      TodoModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

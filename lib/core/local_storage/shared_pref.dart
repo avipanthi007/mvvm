@@ -6,10 +6,18 @@ import 'package:mvvm/features/home/models/data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
+  
   Future saveData(TodoModel data) async {
     List<String> dataList =
         await SharedPref.preferences.getStringList("data") ?? [];
     dataList.add(jsonEncode(data));
+    await SharedPref.preferences.setStringList("data", dataList);
+    print(dataList);
+  }
+   Future updateData(TodoModel data,index) async {
+    List<String> dataList =
+        await SharedPref.preferences.getStringList("data") ?? [];
+    dataList[index] = await jsonEncode(data);
     await SharedPref.preferences.setStringList("data", dataList);
     print(dataList);
   }
